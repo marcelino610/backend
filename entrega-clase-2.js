@@ -10,9 +10,10 @@ class Contenedor {
             err ? console.error('Sucedieron cosas: ', err) : files;
         })
 
-        !(dirList.some(el => el === this.fileName)) && fs.writeFileSync(`./${this.fileName}`, JSON.stringify({}))
+        if (!(dirList.some(el => el === this.fileName)) || !(fs.readFileSync(`./${this.fileName}`, 'utf-8'))) fs.writeFileSync(`./${this.fileName}`, JSON.stringify({}))
 
         let data
+        console.log('data: ', data)
         try {
             data = fs.readFileSync(`./${this.fileName}`, 'utf-8');
         } catch (err) {
@@ -76,13 +77,18 @@ class Contenedor {
             console.error('Sucedieron cosas: ', err)
         } 
         data = JSON.parse(data)
-        delete data[id]
-
-        try {
-            fs.writeFileSync(`./${this.fileName}`, JSON.stringify(data))
-        } catch (err) {
-            console.error('Sucedieron cosas: ', err)
+        
+        if (data[id]) {
+            delete data[id]
+            try {
+                fs.writeFileSync(`./${this.fileName}`, JSON.stringify(data))
+            } catch (err) {
+                console.error('Sucedieron cosas: ', err)
+            }
+        } else {
+            throw new Error('producto no encontrado')
         }
+
     }
 
     deleteAll() {
@@ -91,6 +97,32 @@ class Contenedor {
         } catch (err) {
             console.error('Sucedieron coas: ', err)
         }
+    }
+
+    update(id, updatedObject) {
+        let data
+        try {
+            data = fs.readFileSync(`./${this.fileName}`, 'utf-8');
+        } catch (err) {
+            console.error('Sucedieron cosas: ', err)
+        }
+        data = JSON.parse(data)
+
+        if (data[id]) {
+            data[id] = updatedObject
+            data[id].id = id
+            
+            data = JSON.stringify(data)
+    
+            try {
+                fs.writeFileSync(`./${this.fileName}`, data);
+            } catch (err) {
+                console.error('Sucedieron cosas: ', err);
+            }
+        } else {
+            throw new Error('No se encuentra el producto que está buscando')
+        }
+        
     }
 }
 
