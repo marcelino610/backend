@@ -3,11 +3,10 @@ const app = express()
 const handlebars = require('express-handlebars')
 const Contenedor = require('./prod-cont.js')
 
-let productosGuardados = new Contenedor('./handlebars/products.txt')
-let products = productosGuardados.getAll()
+let productosGuardados = new Contenedor('products.txt')
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
 
 app.engine('hbs', handlebars({
     extname: '.hbs',
@@ -17,24 +16,15 @@ app.engine('hbs', handlebars({
 app.set('view engine', 'hbs')
 app.set('views', './handlebars/views')
 
-try {
-    app.get('/productos', (req, res) => {
-        res.render('main.hbs', { productos: products, prodExists: true })
-    })
-} catch (error) {
-    res.send(`${error}`)
-}
 
-try {
-    app.post('/productos', (req, res) => {
-        console.log(typeof(req.body))
-        let reqBody = JSON.parse(JSON.stringify(req.body))
-        productosGuardados.save(reqBody)
-        res.send(req.body)
-    })
-} catch (error) {
-    
-}
+app.get('/productos', (req, res) => {
+    res.render('main.hbs', { productos: productosGuardados.getAll(), length: productosGuardados.getAll().length > 0 })
+})
+
+app.post('/productos', (req, res) => {
+    productosGuardados.save(JSON.parse(JSON.stringify(req.body)))
+    res.send(`${JSON.stringify(req.body)}\n${JSON.stringify(productosGuardados.getAll())}`)
+})
 
 app.use(express.static('./handlebars/public'))
 

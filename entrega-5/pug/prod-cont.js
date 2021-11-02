@@ -6,19 +6,12 @@ class Contenedor {
     }
 
     save(newObject) {
-        //guardaba en dirList los archivos/directorios en /entrega-5
+
         const dirList = fs.readdirSync('./', (err, files) => {
             err ? console.error('Sucedieron cosas: ', err) : files;
         })
         
-        //al ingresar al constructor el prámetro '/handlebars/products.txt'
-        //y buscar en /entrega-5 o leer con readFileSync
         if (!(dirList.some(el => el === this.fileName)) || !(fs.readFileSync(`./${this.fileName}`, 'utf-8'))) fs.writeFileSync(`./${this.fileName}`, JSON.stringify({}))
-        //no encontraba ningún archivo con el nombre indicado
-        //en cambio, el parámetro sí servía para indicar dónde crear el archivo nuevo
-        //usando writeFileSync
-        //finalmente, guardaba siempre en 'entrega-5/handlebars/products.txt' un archivo con un
-        //objeto vacío
         
         let data
 

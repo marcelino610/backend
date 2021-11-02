@@ -1,0 +1,26 @@
+<div class="col-6 offset-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Producto</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Imagen</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (products.length > 0) { %>
+                <% products.forEach( el => { %>
+                    <tr>
+                        <td><%= el.title %></td>
+                        <td><%= el.price %></td>
+                        <td>
+                            <img src=<%= el.thumbnail %> class="img-fluid" alt="img">
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <td colspan="3">No hay productos</td>
+            <% } %>
+        </tbody>
+    </table>
+</div>

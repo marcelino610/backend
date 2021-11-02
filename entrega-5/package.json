@@ -4,8 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "ejs": "nodemon ./ejs/server.js",
     "hbs": "nodemon ./handlebars/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pug": "nodemon ./pug/server.js"
   },
   "keywords": [],
   "author": "",

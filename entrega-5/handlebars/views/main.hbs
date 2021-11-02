@@ -9,19 +9,21 @@
                         <th scope="col">Imagen</th>
                     </tr>
                 </thead>
-                {{#if prodExists}}
                 <tbody>
-                    {{#each productos}}
-                    <tr>
-                        <td>{{this.title}}</td>
-                        <td>{{this.price}}</td>
-                        <td>
-                            <img src="{{this.thumbnail}}" class="img-fluid" alt="img">
-                        </td>
-                    </tr>
-                    {{/each}}
+                    {{#if length}}
+                        {{#each productos}}
+                        <tr>
+                            <td>{{this.title}}</td>
+                            <td>{{this.price}}</td>
+                            <td>
+                                <img src="{{this.thumbnail}}" class="img-fluid" alt="img">
+                            </td>
+                        </tr>
+                        {{/each}}
+                    {{else}}
+                        <td colspan="3">No hay productos</td>
+                    {{/if}}
                 </tbody>
-                {{/if}}
             </table>
         </div>
         <div class="col-4 offset-4">
