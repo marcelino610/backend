@@ -1,9 +1,4 @@
 import mongoose from 'mongoose'
-import config from '../src/config.js'
-
-await mongoose.connect(config.mongodb.URI, config.mongodb.options) //.URL es el string de conexión a mongodb
-    .then(() => console.log('mongo conectado'))
-    .catch(err => console.log('Error al conectar mongo', err))
 
 class ProductsContainer {
     constructor(collName, schema) {

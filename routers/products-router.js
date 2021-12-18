@@ -8,13 +8,14 @@ productsRouter.route('/')
     .get(async (req, res) => {
         res.json(await products.getAll())
     })
-    .post(verifyAuth, (req, res) => {
+    .post(verifyAuth, async (req, res) => {
         let productData = {
             //el id lo agrega el método add()
             timestamp: Date.now(),
             ...req.body // pasar por req los siguientes campos: name, description, code, imageURL, price, stock
         }
-        res.json({ message: `Producto añadido. ID: ${products.add(productData)}` })
+        let id = await products.add(productData)
+        res.json({ message: `Producto añadido. ID: ${id}` })
     })
 productsRouter.route('/:id')
     .get(async (req, res) => {

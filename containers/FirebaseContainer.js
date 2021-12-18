@@ -13,43 +13,64 @@ class ProductsContainer {
     }
 
     async get(id) {
-        const doc = this.collection.doc(`${id}`)
-        const item = await doc.get()
-        doc ? item.data() : ({ message: `Producto ${id} no encontrado` })
+        const doc = await this.collection.doc(`${id}`).get().then(res => res.data())
+        if (doc) {
+            return doc
+        } else {
+            return false
+        }
     }
 
     async getAll() {
-        const data = await this.collection.get().docs
+        const data = await this.collection.get()
         let response = {}
-        data.map(doc => ({
-            id: doc.id,
-            name: doc.data().name,
-            description: doc.data().description,
-            code: doc.data().code,
-            imageURL: doc.data().imageURL,
-            price: doc.data().price,
-            stock: doc.data().stock
-        })).forEach(el => response[el.id] = el)
+        if (data) {
+            data.docs.map(doc => ({
+                id: doc.id,
+                name: doc.data().name,
+                description: doc.data().description,
+                code: doc.data().code,
+                imageURL: doc.data().imageURL,
+                price: doc.data().price,
+                stock: doc.data().stock
+            })).forEach(el => response[el.id] = el)
+        } else {
+            response = { message: 'No se han encontrado productos' }
+        }
         return response
     }
 
     async add(newProduct) {
-        const docIds = await this.collection.get().docs.map(doc => (doc.id))
-        const id = docIds[docIds.length - 1]
+        let data = await this.collection.get()
+        let id
+        const docIds = data.docs.map(doc => (doc.id))
+        if (docIds.length > 0) {
+            id = parseInt(docIds[docIds.length - 1]) + 1
+        } else {
+            id = 1
+        }
         await this.collection.doc(`${id}`).create({ id, ...newProduct })
         return id
     }
 
     async update(id, prodParams) {
-        this.collection.doc(`${id}`) ?
-            await this.collection.doc(`${id}`).update({ ...prodParams }) :
-            ({ message: `Producto ${id} no encontrado` })
+        let data = await this.collection.doc(`${id}`).get()
+        if (data) {
+            await this.collection.doc(`${id}`).update({ ...prodParams })
+            return true
+        } else {
+            return false
+        }
     }
 
     async delete(id) {
-        this.collection.doc(`${id}`) ?
-            await this.collection.doc(`${id}`).delete() :
-            ({ message: `Producto ${id} no encontrado` })
+        let data = await this.collection.doc(`${id}`).get()
+        if (data.data()) {
+            await this.collection.doc(`${id}`).delete()
+            return true
+        } else {
+            return false
+        }
     }
 }
 
@@ -59,43 +80,58 @@ class CartsContainer {
     }
 
     async get(id) {
-        const doc = this.collection.doc(`${id}`)
-        const item = await doc.get()
-        doc ? item.data() : ({ message: `Producto ${id} no encontrado` })
+        const doc = await this.collection.doc(`${id}`).get().then(res => res.data())
+        if (doc) {
+            return doc
+        } else {
+            return false
+        }
     }
 
     async getAll() {
-        const data = await this.collection.get().docs
+        const data = await this.collection.get()
         let response = {}
-        data.map(doc => ({
-            id: doc.id,
-            name: doc.data().name,
-            description: doc.data().description,
-            code: doc.data().code,
-            imageURL: doc.data().imageURL,
-            price: doc.data().price,
-            stock: doc.data().stock
-        })).forEach(el => response[el.id] = el)
+        if (data) {
+            data.map(doc => ({
+                id: doc.id,
+                timestamp: doc.data().timestamp,
+                products: doc.data().products
+            })).forEach(el => response[el.id] = el)
+        }
         return response
     }
 
     async add(newCart) {
-        const docIds = await this.collection.get().docs.map(doc => (doc.id))
-        const id = docIds[docIds.length - 1]
+        const data = await this.collection.get()
+        let id
+        const docIds = data.docs.map(doc => (doc.id))
+        if (docIds.length > 0) {
+            id = parseInt(docIds[docIds.length - 1]) + 1
+        } else {
+            id = 1
+        }
         await this.collection.doc(`${id}`).create({ id, ...newCart })
         return id
     }
 
     async update(id, cartParams) {
-        this.collection.doc(`${id}`) ?
-            await this.collection.doc(`${id}`).update({ ...cartParams }) :
-            ({ message: `Producto ${id} no encontrado` })
+        let data = this.collection.doc(`${id}`).get()
+        if (data) {
+            await this.collection.doc(`${id}`).update({ ...cartParams })
+            return true
+        } else {
+            return false
+        }
     }
 
     async delete(id) {
-        this.collection.doc(`${id}`) ?
-            await this.collection.doc(`${id}`).delete() :
-            ({ message: `Producto ${id} no encontrado` })
+        let data = await this.collection.doc(`${id}`).get()
+        if (data) {
+            await this.collection.doc(`${id}`).delete()
+            return true
+        } else {
+            return false
+        }
     }
 }
 

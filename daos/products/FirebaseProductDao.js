@@ -6,4 +6,4 @@ class FirebaseProductDao extends ProductsContainer {
     }
 }
 
-export default FirebaseProductDao
+export default new FirebaseProductDao()

@@ -1,4 +1,4 @@
-const persMethod = 'mongodb' //para cambiar persistencia, modificar esta variable ('file', 'firebase', 'memory', 'mongodb')
+const persMethod = 'firebase' //para cambiar persistencia, modificar esta variable ('file', 'firebase', 'memory', 'mongodb')
 
 export default {
     method: persMethod,
