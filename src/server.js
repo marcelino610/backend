@@ -1,16 +1,27 @@
 import express from 'express'
-import fs from 'fs'
 import { Server } from 'socket.io'
-import MariaDBContainer from '../mariadb/mariaContainer.js'
-import ChatContainer from '../mariadb/chatContainer.js'
-import { options, options2 } from '../mariadb/options.js'
 import server from 'http'
+import { ProductsContainer } from '../containers/MongoDBContainer.js'
+import mongoose from 'mongoose'
+// import fs from 'fs'
+// import MariaDBContainer from '../containers/mariadb/mariaContainer.js'
+// import ChatContainer from '../containers/mariadb/chatContainer.js'
+// import { options, options2 } from '../containers/mariadb/options.js'
 
 const app = express()
 const httpServer = server.createServer(app)
 const io = new Server(httpServer)
-const products = new MariaDBContainer(options, 'products')
-const chat = new ChatContainer(options2)
+const products = new ProductsContainer('products', new mongoose.Schema({
+    id: { type: Number },
+    name: { type: String },
+    price: { type: Number },
+    imageURL: { type: String }
+}))
+// const products = new MariaDBContainer(options, 'products')
+// const chat = new ChatContainer(options2)
+
+import faker from 'faker'
+faker.locale = 'es'
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -18,6 +29,26 @@ app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
     res.send(console.log('conectado'))
+})
+
+app.get('/api/productos-test', (req, res) => {
+    io.on('connect', async socket => {
+        let fakeProducts = []
+        function a() {
+            for (let i = 0; i < 5; i++) {
+                fakeProducts.push({
+                    nombre: faker.commerce.productName(),
+                    precio: faker.commerce.price(),
+                    imagen: faker.image.image()
+                })
+            }
+        }
+        await a()
+        console.log(fakeProducts);
+        socket.emit('load-fake-products', { fakeProds: JSON.parse(JSON.stringify(fakeProducts)) })
+    })
+
+    res.sendFile('productos-test.html', { root: 'public' })
 })
 
 io.on('connection', socket => {

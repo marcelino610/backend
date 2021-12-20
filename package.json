@@ -14,11 +14,13 @@
   "dependencies": {
     "express": "^4.17.1",
     "knex": "^0.95.14",
+    "mongoose": "^6.1.2",
     "mysql": "^2.18.1",
     "socket.io": "^4.3.1",
     "sqlite3": "^4.2.0"
   },
   "devDependencies": {
+    "faker": "^5.5.3",
     "nodemon": "^2.0.15"
   }
 }
