@@ -1,13 +1,12 @@
 import { schema, normalize } from 'normalizr'
 import util from 'util'
 
-const authorsSchema = new schema.Entity('author')//, { idAttribute: 'id' })
+const authorsSchema = new schema.Entity('authors', { idAttribute: 'id' })
 const messagesSchema = new schema.Entity('messages', {
-    author: authorsSchema,
-    idAttribute: 'text'
-})
+    author: authorsSchema
+}, { idAttribute: '_id' })
 const chatSchema = new schema.Entity('chat', {
-    messages: messagesSchema
+    messages: [messagesSchema]
 })
 
 function print(objeto) {
