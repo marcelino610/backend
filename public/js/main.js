@@ -27,7 +27,7 @@ socket.on('load-products', data => {
 
 socket.on('new-msg', data => {
     document.getElementById('msgs').innerHTML += `
-    <p style="color: brown;"><b style="color: blue !important;">${data.email}</b> [${data.date}]: <i style="color: green !important;">${data.message}</i></p>
+    <p style="color: brown;"><b style="color: blue !important;">${data.author.id}</b> [${data.date}]: <i style="color: green !important;">${data.text}</i></p>
     `
 })
 
@@ -50,16 +50,19 @@ document.getElementById('send-message') && document.getElementById('send-message
     const email = document.getElementById('msg-email').value
     if (email && email != '') {
         socket.emit('send-message', {
+            author: {
+                id: email,
+                fname: document.getElementById('msg-fname').value,
+                lname: document.getElementById('msg-lname').value,
+                age: document.getElementById('msg-age').value,
+                alias: document.getElementById('msg-alias').value,
+                avatar: document.getElementById('msg-image').value
+            },
+            text: document.getElementById('msg-message').value,
             date: new Date().toLocaleString(),//Date.now(),
-            email: email,
-            message: document.getElementById('msg-message').value
         })
         document.getElementById('msg-message').value = ''
     } else {
         alert('Para participar en el chat debés proporcionar un correo de contacto')
     }
 })
-
-// document.addEventListener('load', () => {
-//     socket.emit('connection')
-// })

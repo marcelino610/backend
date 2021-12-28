@@ -1,12 +1,18 @@
 import express from 'express'
 import { Server } from 'socket.io'
 import server from 'http'
-import { ProductsContainer } from '../containers/MongoDBContainer.js'
+import { ChatContainer, ProductsContainer } from '../containers/MongoDBContainer.js'
 import mongoose from 'mongoose'
-// import fs from 'fs'
-// import MariaDBContainer from '../containers/mariadb/mariaContainer.js'
-// import ChatContainer from '../containers/mariadb/chatContainer.js'
-// import { options, options2 } from '../containers/mariadb/options.js'
+import faker from 'faker'
+import { normalizeChat, denormalizeChat } from './normalizr.js'
+
+await mongoose.connect('mongodb://localhost:27017', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,
+})
+    .then(console.log('mongo conectado'))
+    .catch(err => console.log(err))
 
 const app = express()
 const httpServer = server.createServer(app)
@@ -17,10 +23,12 @@ const products = new ProductsContainer('products', new mongoose.Schema({
     price: { type: Number },
     imageURL: { type: String }
 }))
-// const products = new MariaDBContainer(options, 'products')
-// const chat = new ChatContainer(options2)
+const chat = new ChatContainer('chat', new mongoose.Schema({
+    author: { type: Object },
+    text: { type: String },
+    date: { type: String }
+}))
 
-import faker from 'faker'
 faker.locale = 'es'
 
 app.use(express.static('public'))
@@ -61,10 +69,18 @@ io.on('connection', socket => {
         io.sockets.emit('load-products', { products: products.getAll(), anyProduct: products.getAll().length > 0 })
     })
 
-    socket.on('send-message', data => {
-        console.log(data)
-        chat.addMessage(data)
-        io.sockets.emit('new-msg', data)
+    socket.on('send-message', async data => {
+        console.log('data recibida: ', data)
+        await chat.add(data)
+        let chatHistory = await chat.getAll()
+        let obj = {
+            id: 'historial de mensajes',
+            messages: chatHistory
+        }
+        console.log(obj);
+        let normalizedChat = await normalizeChat(obj)
+        console.log('normalizedChat: ', normalizedChat)
+        io.sockets.emit('new-msg', normalizedChat) //chat normalizado; hay que desnormalizarlo del lado del cliente
     })
 })
 
