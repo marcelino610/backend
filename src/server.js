@@ -4,7 +4,7 @@ import server from 'http'
 import { ChatContainer, ProductsContainer } from '../containers/MongoDBContainer.js'
 import mongoose from 'mongoose'
 import faker from 'faker'
-import { normalizeChat, denormalizeChat } from './normalizr.js'
+import { normalizeChat, chatSchema } from './normalizr.js'
 
 await mongoose.connect('mongodb://localhost:27017', {
     useNewUrlParser: true,
@@ -77,10 +77,8 @@ io.on('connection', socket => {
             id: 'historial de mensajes',
             messages: chatHistory
         }
-        console.log(obj);
         let normalizedChat = await normalizeChat(obj)
-        console.log('normalizedChat: ', normalizedChat)
-        io.sockets.emit('new-msg', normalizedChat) //chat normalizado; hay que desnormalizarlo del lado del cliente
+        io.sockets.emit('new-msg', { normalizedChat, chatSchema })
     })
 })
 

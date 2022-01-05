@@ -26,8 +26,10 @@ socket.on('load-products', data => {
 })
 
 socket.on('new-msg', data => {
+    console.log(data.normalizedChat)
+    let denormalizedChat = denormalize(datanormalizedChat.result, data.chatSchema, data.normalizedChat.entities )
     document.getElementById('msgs').innerHTML += `
-    <p style="color: brown;"><b style="color: blue !important;">${data.author.id}</b> [${data.date}]: <i style="color: green !important;">${data.text}</i></p>
+    <p style="color: brown;"><b style="color: blue !important;">${denormalizedChat.author.id}</b> [${data.date}]: <i style="color: green !important;">${data.text}</i></p>
     `
 })
 
@@ -47,6 +49,7 @@ document.getElementById('save-prod') && document.getElementById('save-prod').add
 
 document.getElementById('send-message') && document.getElementById('send-message').addEventListener('submit', ev => {
     ev.preventDefault()
+
     const email = document.getElementById('msg-email').value
     if (email && email != '') {
         socket.emit('send-message', {

@@ -1,4 +1,4 @@
-import { schema, normalize } from 'normalizr'
+import { schema, normalize, denormalize } from 'normalizr'
 import util from 'util'
 
 const authorsSchema = new schema.Entity('authors', { idAttribute: 'id' })
@@ -13,16 +13,10 @@ function print(objeto) {
     console.log('Objeto normalizado: ', util.inspect(objeto, false, 12, true))
 }
 
-async function normalizeChat(obj) {
+let normalizeChat = obj => {
     const normObj = normalize(obj, chatSchema)
     print(normObj)
-    console.log('Longitud objeto original:  ', JSON.stringify(obj).length);
-    console.log('Longitud objeto normalizado: ', JSON.stringify(normObj).length);
     return normObj
 }
 
-async function denormalizeChat(obj) {
-
-}
-
-export { normalizeChat, denormalizeChat }
+export { normalizeChat, chatSchema }
